@@ -1,0 +1,12 @@
+{
+  "name": "cosmic-website",
+  "version": "1.0.0",
+  "description": "Marketing site for Cosmic, a D2C and e-commerce growth agency.",
+  "scripts": {
+    "dev": "npx serve . -l 5173",
+    "start": "npx serve ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
