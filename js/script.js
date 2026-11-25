@@ -335,7 +335,7 @@
       input.addEventListener('input', function () { if (input.getAttribute('aria-invalid') === 'true') check(id); });
     });
 
-    win.addEventListener('pageshow', function () {
+    window.addEventListener('pageshow', function () {
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.removeAttribute('aria-busy');

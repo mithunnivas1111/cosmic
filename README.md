@@ -1,76 +1,91 @@
-# Cosmic — website
+# Cosmic
 
-Marketing site for Cosmic, a D2C and e-commerce growth agency.
-Plain HTML, CSS and vanilla JavaScript. No framework, no build step, no runtime dependencies.
+Marketing website for **Cosmic**, a D2C and e-commerce growth agency. Built with semantic HTML5, CSS, and vanilla JavaScript — no framework, no build step, and no runtime dependencies.
 
-```
-cosmic-website/
-├── index.html              Page markup (semantic HTML5, all content)
-├── css/styles.css          Design tokens + components + responsive rules
-├── js/script.js            Interaction modules (nav, reveals, services, orbit, timeline, FAQ, form)
+## Project Structure
+
+```text
+cosmic/
+├── index.html                        # Page markup and all sections
+├── css/
+│   └── styles.css                    # Design tokens, layout frame, components, responsive & preference rules
+├── js/
+│   └── script.js                     # Interactive modules (nav, reveals, services, orbit, timeline, FAQ, form)
 ├── assets/
-│   ├── logo/               SVG mark + wordmark, dark and light versions
-│   ├── icons/favicon.svg
-│   ├── images/og-cosmic.png  Social share image (1200×630)
-│   └── fonts/              Put the licensed Degular files here (see below)
+│   ├── fonts/                        # Licensed Degular .woff2 files go here (currently empty)
+│   ├── icons/
+│   │   └── favicon.svg
+│   ├── images/
+│   │   ├── hero-horizon.jpg          # Hero background artwork
+│   │   └── og-cosmic.png             # Open Graph share image (1200×630)
+│   └── logo/
+│       ├── cosmic-mark.svg
+│       ├── cosmic-mark-light.svg
+│       ├── cosmic-wordmark.svg
+│       └── cosmic-wordmark-light.svg
+├── package.json
 └── README.md
 ```
 
-## Run it
+## Local Development & Deployment
 
-Open `index.html` in a browser, or serve the folder so relative paths behave exactly as in production:
+Open `index.html` directly, or serve the folder locally so relative paths match production:
 
 ```bash
-cd cosmic-website
-python3 -m http.server 8080     # then visit http://localhost:8080
+npm run dev       # starts npx serve . -l 5173
 ```
 
-Deploy by uploading the folder as-is to any static host (Netlify, Vercel, Cloudflare Pages, S3, cPanel).
+Other options:
 
-## Fonts — action needed
+```bash
+npm start                     # npx serve .
+python3 -m http.server 8080   # http://localhost:8080
+```
 
-The brand face is **Degular**, a commercial typeface (OH no Type Co.). The font files were not supplied and are not bundled.
+Deploy by uploading the repository root as-is to any static host (Netlify, Vercel, Cloudflare Pages, GitHub Pages, S3, etc.).
 
-* `styles.css` already declares `@font-face` for Degular 400/500/600/700. Right now it only uses `local()`, so a computer with Degular installed shows it, and nothing 404s for everyone else.
-* Until the files are added, the site renders in **Figtree** (loaded from Google Fonts) as a stand-in. It is not Degular and should not be presented as such.
+## Audit Form (`#audit-form`)
 
-To switch on Degular for every visitor:
+The contact/audit request form in [`index.html`](index.html) submits directly via **FormSubmit** (`method="POST"`, `action="https://formsubmit.co/mithunnivas1111@gmail.com"`).
 
-1. Export web fonts from your licence as `Degular-Regular.woff2`, `Degular-Medium.woff2`, `Degular-Semibold.woff2`, `Degular-Bold.woff2` and put them in `assets/fonts/`.
-2. In `css/styles.css` (section 1), replace each `src: local(...)` line with the commented line beneath it.
-3. Optionally delete the three Figtree `<link>` tags in `index.html`.
+* **Named fields:** `name`, `email`, `phone`, `brand`, `website`, `platform`, `spend`, `need`, and `message`.
+* **FormSubmit hidden fields:**
+  * `_subject` — defaults to `"New audit request from the Cosmic website"` and is updated to `"Audit request from <brand>"` on submit.
+  * `_template` — set to `table` for structured email formatting.
+  * `_honey` — hidden honeypot input for basic spam filtering.
+* **Client-side handling (`initForm()` in [`js/script.js`](js/script.js)):**
+  * Validates the five required fields (`f-name`, `f-email`, `f-phone`, `f-brand`, `f-website`) inline on blur/input and before submission.
+  * Displays `"Sending your audit request…"` and disables the submit button on valid submit so the native `POST` proceeds without duplicate requests, and resets button/status state on `pageshow`.
 
-Re-render `assets/images/og-cosmic.png` once Degular is in place; it was set in a stand-in face.
+> **First-time activation:** On the first live submission, FormSubmit will send a confirmation email to `mithunnivas1111@gmail.com`. Click the activation link in that email once to enable submissions.
 
-## Form behaviour
+## Fonts
 
-The audit form (`#audit-form`) posts directly to [FormSubmit](https://formsubmit.co/) at `https://formsubmit.co/mithunnivas1111@gmail.com`. Inline validation covers the five required fields (name, email, phone/WhatsApp, brand, store link) before submitting.
+The brand typeface is **Degular** (weights `400` and `500`), which is not bundled in the repo:
 
-On your very first live submission, FormSubmit will send a confirmation link to `mithunnivas1111@gmail.com`—click it once to activate the form.
+* [`css/styles.css`](css/styles.css) declares `@font-face` rules for Degular `400` and `500` using `local()` first, so machines without Degular fall back cleanly to **Figtree** (loaded from Google Fonts alongside **Instrument Serif** in [`index.html`](index.html)) with no 404s.
+* To enable Degular for all visitors:
+  1. Place `Degular-Regular.woff2` and `Degular-Medium.woff2` in `assets/fonts/`.
+  2. In section 1 of [`css/styles.css`](css/styles.css), swap each `src: local(...)` line with the commented `url("../assets/fonts/...")` line below it.
+  3. Optionally remove the Figtree `<link>` tags in [`index.html`](index.html) if Instrument Serif is no longer needed either.
 
-## Design system (short version)
+## Design & Interactive Modules
 
-| Token | Value | Use |
+| Token | Value | Role |
 |---|---|---|
-| `--navy-950` | `#030411` | Page background |
-| `--blue-500` | `#1B5BFF` | Primary action, active states, the numbers band |
-| `--peri-400` | `#7B8CFF` | Labels, rules, secondary accents |
-| `--white` | `#FFFFFF` | Text, the light audit section |
+| `--navy-950` | `#010106` | Primary dark background |
+| `--blue-500` | `#1B5BFF` | Primary brand blue and metrics band |
+| `--peri-400` | `#7B8CFF` | Labels, rules, and accents |
+| `--white` | `#FFFFFF` | Primary text and light bands |
 
-* **Frame.** Content sits between two hairline rails that run the full page, crossed at each section by a rule with a small plus mark. This is the structural idea taken from the OMA Operator reference.
-* **Type.** Display at 600 weight with tight negative tracking (−0.045em hero, −0.035em section titles), body near 0. Mono uppercase labels (`01 / Why Cosmic`) give the editorial index.
-* **Rhythm.** Dark sections, a raised dark tone, one full-bleed electric-blue band (metrics) and one light section (the free audit, the main conversion point).
-* **Brand visual.** The planet horizon from the brand guide is drawn in CSS (hero, and again behind the contact form). No raster imagery, no stock photos.
-* **Motion.** Restrained entrance and scroll reveals (transform and opacity only), scroll-linked services index, orbit diagram and timeline rail, animated FAQ. Everything respects `prefers-reduced-motion`, `prefers-reduced-transparency` and `prefers-contrast`.
+* **Layout & rhythm:** Content sits inside a hairline `.frame` with corner plus marks across alternating dark, light (`.section--light` on sections 01, 03, 05, 07, 09), and blue (`.section--blue` on section 06) bands.
+* **JavaScript modules ([`js/script.js`](js/script.js)):** Header scroll state, accessible mobile drawer with focus trap, nav scroll-spy, hero entrance, staggered scroll reveals, mobile comparison switcher (`data-compare`), scroll-linked services index, interactive 4-stage growth orbit (`data-orbit`), scroll-driven 90-day timeline rail (`data-timeline`), keyboard-accessible FAQ accordion (`data-accordion`), and inline form validation.
+* **Accessibility & user preferences:** Respects `prefers-reduced-motion`, `prefers-reduced-transparency`, and `prefers-contrast`.
 
-## Logo
+## Remaining Setup Checklist
 
-`cosmic-mark.svg` is a vector redraw of the planet-C, blade and star from the brand guide image. `cosmic-wordmark.svg` pairs it with "osmic" set from Poppins Bold outlines (OFL), the closest geometric match available. If the original vector logo exists, drop it in with the same filenames and it will be used everywhere.
-
-## Missing assets and integrations
-
-* Degular web font files (licensed).
-* The original vector logo files. The current SVGs are faithful redraws, not the master artwork.
-* Cosmic's Instagram handle and URL. The copy says "DM the word AUDIT on Instagram", but the source had no link, so none is shown.
-* A canonical domain. Add `<link rel="canonical">` and an absolute `og:url`/`og:image` URL once the domain is known (social crawlers need absolute URLs).
-* Privacy policy page. Not in the source; add one if required for your deployment.
+* Confirm the FormSubmit activation email on `mithunnivas1111@gmail.com` after the first live form submission.
+* Add licensed Degular `.woff2` files to `assets/fonts/` and re-render `assets/images/og-cosmic.png` if needed.
+* Replace the redrawn SVGs in `assets/logo/` with master vector exports if available.
+* Add the Cosmic Instagram URL in the contact section (`#contact` copy mentions DMing `AUDIT` on Instagram).
+* Add `<link rel="canonical">` and absolute `og:url` / `og:image` URLs once the production domain is configured.
