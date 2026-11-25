@@ -956,6 +956,11 @@ strong, b, th { font-weight: 500; color: var(--text); }
   background: rgba(27, 91, 255, 0.14); border: 1px solid rgba(27, 91, 255, 0.6);
   font-size: var(--fs-small); line-height: 1.5;
 }
+.form__status.is-error {
+  background: rgba(255, 143, 163, 0.12);
+  border-color: rgba(255, 143, 163, 0.55);
+  color: var(--danger);
+}
 .form__status a { text-decoration: underline; text-underline-offset: 3px; }
 .form__note { margin-top: var(--s-4); font-size: 0.875rem; color: var(--text-3); text-align: center; }
 

@@ -292,14 +292,16 @@
   }
 
   /* ---------- Audit request form ----------
-     Validates required fields inline, then lets the native POST submit
-     directly to FormSubmit (mithunnivas1111@gmail.com). */
+     Validates required fields inline, then submits the form data via fetch to
+     FormSubmit's AJAX endpoint so submissions arrive at mithunnivas1111@gmail.com
+     without leaving the page. */
   function initForm() {
     var form = $('#audit-form');
     if (!form) return;
+    var TO = 'mithunnivas1111@gmail.com';
+    var ENDPOINT = 'https://formsubmit.co/ajax/' + TO;
     var status = $('#form-status');
     var submitBtn = form.querySelector('button[type="submit"]');
-    var subjectInput = form.querySelector('input[name="_subject"]');
 
     var rules = {
       'f-name': function (v) { return v ? '' : 'Please enter your name.'; },
@@ -329,44 +331,109 @@
       return !msg;
     }
 
+    function setSubmitting(busy) {
+      if (!submitBtn) return;
+      submitBtn.disabled = busy;
+      if (busy) submitBtn.setAttribute('aria-busy', 'true');
+      else submitBtn.removeAttribute('aria-busy');
+    }
+
+    function showError(message) {
+      if (!status) return;
+      status.hidden = false;
+      status.classList.add('is-error');
+      status.innerHTML = '';
+      status.appendChild(doc.createTextNode(message + ' You can also email us directly at '));
+      var link = doc.createElement('a');
+      link.href = 'mailto:' + TO;
+      link.textContent = TO;
+      status.appendChild(link);
+      status.appendChild(doc.createTextNode('.'));
+    }
+
     Object.keys(rules).forEach(function (id) {
       var input = doc.getElementById(id);
       input.addEventListener('blur', function () { if (input.value.trim() || input.getAttribute('aria-invalid')) check(id); });
       input.addEventListener('input', function () { if (input.getAttribute('aria-invalid') === 'true') check(id); });
     });
 
-    window.addEventListener('pageshow', function () {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.removeAttribute('aria-busy');
-      }
-      if (status) status.hidden = true;
-    });
-
     form.addEventListener('submit', function (e) {
+      e.preventDefault();
       var firstBad = null;
       Object.keys(rules).forEach(function (id) {
         if (!check(id) && !firstBad) firstBad = doc.getElementById(id);
       });
       if (firstBad) {
-        e.preventDefault();
         firstBad.focus();
         if (status) status.hidden = true;
         return;
       }
 
-      var brand = (doc.getElementById('f-brand').value || '').trim();
-      if (subjectInput && brand) {
-        subjectInput.value = 'Audit request from ' + brand;
-      }
+      var d = new FormData(form);
+      var g = function (k) { return (d.get(k) || '').toString().trim(); };
+      var payload = {
+        name: g('name'),
+        email: g('email'),
+        phone: g('phone'),
+        brand: g('brand'),
+        website: g('website'),
+        platform: g('platform'),
+        spend: g('spend'),
+        need: g('need'),
+        message: g('message'),
+        _replyto: g('email'),
+        _subject: 'Audit request from ' + g('brand'),
+        _template: 'table',
+        _captcha: 'false'
+      };
+
       if (status) {
         status.hidden = false;
+        status.classList.remove('is-error');
         status.textContent = 'Sending your audit request…';
       }
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.setAttribute('aria-busy', 'true');
-      }
+      setSubmitting(true);
+
+      fetch(ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          var ok = result.ok && result.data && (result.data.success === true || result.data.success === 'true');
+          if (!ok) {
+            var msg = (result.data && result.data.message) ? result.data.message : 'Could not send your request right now.';
+            showError(msg);
+            setSubmitting(false);
+            return;
+          }
+          form.reset();
+          Object.keys(rules).forEach(function (id) {
+            var input = doc.getElementById(id);
+            if (!input) return;
+            input.removeAttribute('aria-invalid');
+            var field = input.closest('.field');
+            if (field) field.classList.remove('has-error');
+          });
+          if (status) {
+            status.hidden = false;
+            status.classList.remove('is-error');
+            status.textContent = 'Thanks — your audit request has been sent. We’ll reply shortly.';
+          }
+          setSubmitting(false);
+        })
+        .catch(function () {
+          showError('Could not reach the submission service.');
+          setSubmitting(false);
+        });
     });
   }
 

@@ -46,16 +46,13 @@ Deploy by uploading the repository root as-is to any static host (Netlify, Verce
 
 ## Audit Form (`#audit-form`)
 
-The contact/audit request form in [`index.html`](index.html) submits directly via **FormSubmit** (`method="POST"`, `action="https://formsubmit.co/mithunnivas1111@gmail.com"`).
+The contact/audit request form in [`index.html`](index.html) is handled in JavaScript by `initForm()` in [`js/script.js`](js/script.js), which submits the form fields as JSON via `fetch` to FormSubmit's AJAX endpoint for `mithunnivas1111@gmail.com`.
 
-* **Named fields:** `name`, `email`, `phone`, `brand`, `website`, `platform`, `spend`, `need`, and `message`.
-* **FormSubmit hidden fields:**
-  * `_subject` — defaults to `"New audit request from the Cosmic website"` and is updated to `"Audit request from <brand>"` on submit.
-  * `_template` — set to `table` for structured email formatting.
-  * `_honey` — hidden honeypot input for basic spam filtering.
+* **Submitted fields:** `name`, `email`, `phone`, `brand`, `website`, `platform`, `spend`, `need`, and `message`.
+* **Request metadata added in `js/script.js`:** `_replyto`, `_subject` (`"Audit request from <brand>"`), `_template: "table"`, and `_captcha: "false"`.
 * **Client-side handling (`initForm()` in [`js/script.js`](js/script.js)):**
-  * Validates the five required fields (`f-name`, `f-email`, `f-phone`, `f-brand`, `f-website`) inline on blur/input and before submission.
-  * Displays `"Sending your audit request…"` and disables the submit button on valid submit so the native `POST` proceeds without duplicate requests, and resets button/status state on `pageshow`.
+  * Validates the five required fields (`f-name`, `f-email`, `f-phone`, `f-brand`, `f-website`) inline on blur/input and before sending.
+  * Submits in the background without leaving the page, displays confirmation in `#form-status`, and resets the form on success (with a `mailto:` fallback if the request fails).
 
 > **First-time activation:** On the first live submission, FormSubmit will send a confirmation email to `mithunnivas1111@gmail.com`. Click the activation link in that email once to enable submissions.
 
