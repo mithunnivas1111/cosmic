@@ -647,7 +647,10 @@
               <p class="contact__direct reveal"><span class="mono">Email</span><a href="mailto:mithunnivas1111@gmail.com">mithunnivas1111@gmail.com</a></p>
             </div>
 
-            <form class="form reveal" id="audit-form" novalidate>
+            <form class="form reveal" id="audit-form" action="https://formsubmit.co/mithunnivas1111@gmail.com" method="POST" novalidate>
+              <input type="hidden" name="_subject" value="New audit request from the Cosmic website">
+              <input type="hidden" name="_template" value="table">
+              <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" hidden>
               <div class="form__row">
                 <div class="field">
                   <label for="f-name">Full name <span class="req" aria-hidden="true">*</span></label>
@@ -710,7 +713,6 @@
 
               <button class="btn btn--primary btn--block btn--lg" type="submit">Send my audit request</button>
               <div class="form__status" id="form-status" role="status" aria-live="polite" hidden></div>
-              <p class="form__note">This opens your email app with your details filled in. Press send to complete the request.</p>
             </form>
           </div>
         </div>

@@ -292,14 +292,14 @@
   }
 
   /* ---------- Audit request form ----------
-     Behaviour preserved from the original site: on a valid submit it opens the
-     visitor's email app with a pre-filled message to the Cosmic inbox. Nothing
-     is stored or sent by the page itself. */
+     Validates required fields inline, then lets the native POST submit
+     directly to FormSubmit (mithunnivas1111@gmail.com). */
   function initForm() {
     var form = $('#audit-form');
     if (!form) return;
-    var TO = 'mithunnivas1111@gmail.com';
     var status = $('#form-status');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var subjectInput = form.querySelector('input[name="_subject"]');
 
     var rules = {
       'f-name': function (v) { return v ? '' : 'Please enter your name.'; },
@@ -335,45 +335,38 @@
       input.addEventListener('input', function () { if (input.getAttribute('aria-invalid') === 'true') check(id); });
     });
 
+    win.addEventListener('pageshow', function () {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute('aria-busy');
+      }
+      if (status) status.hidden = true;
+    });
+
     form.addEventListener('submit', function (e) {
-      e.preventDefault();
       var firstBad = null;
       Object.keys(rules).forEach(function (id) {
         if (!check(id) && !firstBad) firstBad = doc.getElementById(id);
       });
       if (firstBad) {
+        e.preventDefault();
         firstBad.focus();
-        status.hidden = true;
+        if (status) status.hidden = true;
         return;
       }
-      var d = new FormData(form);
-      var g = function (k) { return (d.get(k) || '').toString().trim(); };
-      var body =
-        'New audit request from the Cosmic website\n\n' +
-        'Name: ' + g('name') + '\n' +
-        'Email: ' + g('email') + '\n' +
-        'Phone/WhatsApp: ' + g('phone') + '\n' +
-        'Brand: ' + g('brand') + '\n' +
-        'Website: ' + g('website') + '\n' +
-        'Platform: ' + g('platform') + '\n' +
-        'Monthly ad spend: ' + g('spend') + '\n' +
-        'Needs help with: ' + g('need') + '\n\n' +
-        'Message:\n' + g('message');
-      var href = 'mailto:' + TO +
-        '?subject=' + encodeURIComponent('Audit request from ' + g('brand')) +
-        '&body=' + encodeURIComponent(body);
 
-      var a = doc.createElement('a');
-      a.href = href;
-      doc.body.appendChild(a); a.click(); a.remove();
-
-      status.hidden = false;
-      status.innerHTML = '';
-      status.appendChild(doc.createTextNode('Your email app should now open with your details filled in. Press send to finish. If nothing opened, email us directly at '));
-      var link = doc.createElement('a');
-      link.href = 'mailto:' + TO; link.textContent = TO;
-      status.appendChild(link);
-      status.appendChild(doc.createTextNode('.'));
+      var brand = (doc.getElementById('f-brand').value || '').trim();
+      if (subjectInput && brand) {
+        subjectInput.value = 'Audit request from ' + brand;
+      }
+      if (status) {
+        status.hidden = false;
+        status.textContent = 'Sending your audit request…';
+      }
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.setAttribute('aria-busy', 'true');
+      }
     });
   }
 

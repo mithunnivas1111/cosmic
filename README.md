@@ -44,9 +44,9 @@ Re-render `assets/images/og-cosmic.png` once Degular is in place; it was set in 
 
 ## Form behaviour
 
-Unchanged from the original site, as requested: a valid submission opens the visitor's email app with a pre-filled message to `mithunnivas1111@gmail.com`. The page itself stores and sends nothing, and the confirmation text says so. Inline validation now covers the five required fields (name, email, phone/WhatsApp, brand, store link).
+The audit form (`#audit-form`) posts directly to [FormSubmit](https://formsubmit.co/) at `https://formsubmit.co/mithunnivas1111@gmail.com`. Inline validation covers the five required fields (name, email, phone/WhatsApp, brand, store link) before submitting.
 
-To receive submissions without relying on the visitor's mail app, connect a form endpoint (Formspree, Basin, Netlify Forms, or your own API) in `initForm()` in `js/script.js`.
+On your very first live submission, FormSubmit will send a confirmation link to `mithunnivas1111@gmail.com`—click it once to activate the form.
 
 ## Design system (short version)
 
@@ -73,5 +73,4 @@ To receive submissions without relying on the visitor's mail app, connect a form
 * The original vector logo files. The current SVGs are faithful redraws, not the master artwork.
 * Cosmic's Instagram handle and URL. The copy says "DM the word AUDIT on Instagram", but the source had no link, so none is shown.
 * A canonical domain. Add `<link rel="canonical">` and an absolute `og:url`/`og:image` URL once the domain is known (social crawlers need absolute URLs).
-* A form backend, if email-app submission isn't enough.
-* Privacy policy page. Not in the source; add one if you collect form data through a backend.
+* Privacy policy page. Not in the source; add one if required for your deployment.
