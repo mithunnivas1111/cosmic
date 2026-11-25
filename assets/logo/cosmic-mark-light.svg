@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Cosmic">
+  <defs>
+    <linearGradient id="cl-ring" x1="84" y1="14" x2="16" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset=".35" stop-color="#D6DBFF"/>
+      <stop offset=".66" stop-color="#7B8CFF"/>
+      <stop offset="1" stop-color="#1B5BFF"/>
+    </linearGradient>
+    <linearGradient id="cl-low" x1="26" y1="84" x2="84" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1B5BFF"/>
+      <stop offset=".5" stop-color="#7B8CFF"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <clipPath id="cl-up"><path d="M-10-10H110V12L-10 98Z"/></clipPath>
+    <clipPath id="cl-dn"><path d="M110 12V110H-10V98Z"/></clipPath>
+    <mask id="cl-gap" maskUnits="userSpaceOnUse" x="-10" y="-10" width="120" height="120">
+      <rect x="-10" y="-10" width="120" height="120" fill="#fff"/>
+      <path d="M-4 94 Q40 69 102 14" fill="none" stroke="#000" stroke-width="11"/>
+    </mask>
+  </defs>
+  <g mask="url(#cl-gap)" fill="none" stroke-width="25">
+    <path clip-path="url(#cl-up)" d="M80.5 60.7 A33 33 0 1 0 26.8 80.3" stroke="url(#cl-ring)"/>
+    <path clip-path="url(#cl-dn)" d="M17 43.7 A33 33 0 1 0 79.7 64.1" stroke="url(#cl-low)" transform="translate(1.5 1.5)"/>
+  </g>
+  <path d="M-4 95 Q35 67 101 15 Q44 73 -4 95Z" fill="#030411"/>
+  <path d="M88 1 Q89.3 9.7 98 11 Q89.3 12.3 88 21 Q86.7 12.3 78 11 Q86.7 9.7 88 1Z" fill="#030411"/>
+</svg>
